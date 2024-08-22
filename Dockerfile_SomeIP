@@ -1,0 +1,55 @@
+# Use Ubuntu 22.04 as the base image
+FROM ubuntu:22.04
+
+# Set environment variables for non-interactive installation
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Update the package list and install dependencies
+RUN apt-get update && apt-get install -y \
+    g++-11 \
+    gcc-11 \
+    cmake=3.22.1-1ubuntu1.22.04.2 \
+    libboost-all-dev=1.74.0.3ubuntu7 \
+    asciidoc \
+    source-highlight \
+    doxygen \
+    graphviz \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set g++ and gcc alternatives to the installed version
+RUN update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-11 100 \
+    && update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 100
+
+# Verify installations
+RUN g++ --version && gcc --version && cmake --version && doxygen --version && asciidoc --version && dpkg -l | grep graphviz
+
+# Set the home directory as the working directory
+WORKDIR /root
+
+########################################################################
+
+#################	How to build it	##################
+#
+# Run the commmand below to build the docker image
+
+# Build with default values
+#
+# > docker build --no-cache  --file Dockerfile_SomeIP --tag "ubuntu_for_someip" .
+#
+# If you face any network problem you can use the command below.( In case of having some proxy, etc.)
+#
+# > docker build --no-cache  --network=host --file Dockerfile_SomeIP --tag "ubuntu_for_someip" .
+
+
+#################	 How to run it		##################
+#
+# You should mount the required folders when you run to have access inside the image.
+#
+# > docker run -it -v /home:/home -v /mnt:/mnt ubuntu_for_someip
+#
+# If you face any network problem you can use the command below.( In case of having some proxy, etc.)
+#
+# > docker run -it --network=host  -v /home:/home -v /mnt:/mnt ubuntu_for_someip
+#
+########################################################################
