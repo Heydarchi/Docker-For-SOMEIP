@@ -14,6 +14,7 @@ RUN apt-get update && apt-get install -y \
     source-highlight \
     doxygen \
     graphviz \
+    iputils-ping net-tools socat netcat telnet tcpdump \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
